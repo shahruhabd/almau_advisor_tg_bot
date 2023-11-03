@@ -1,7 +1,6 @@
 import datetime
 import os
 import django
-import requests
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Almau_Advisor.settings")
 django.setup()
 
@@ -15,7 +14,6 @@ from django.conf import settings
 import ldap3
 from ldap3 import Server, Connection
 from django.utils import timezone
-
 
 AD_SERVER = 'ldap://dca.iab.kz'
 
@@ -67,9 +65,7 @@ def auth_and_ask_question(update, context):
             password = update.message.text
             username = context.user_data['username']
 
-            is_authenticated, message, user_type = check_ad_credentials(AD_SERVER, username, password)
-            if is_authenticated:
-                context.user_data['is_authenticated'] = True
+            if check_ad_credentials(AD_SERVER, username, password):
                 student, created = Student.objects.get_or_create(username=username, defaults={'chat_id': chat_id})
 
                 if created or not (student.full_name and student.course and student.specialty):
@@ -79,14 +75,11 @@ def auth_and_ask_question(update, context):
                 else:
                     context.user_data['student'] = student
                     context.user_data['state'] = 'authenticated'
-                    update.message.reply_text(f'Спасибо, ваш профиль уже заполнен.\n{student.full_name}, \nСпецильность {student.specialty}, \n{student.course} курс\n\nТеперь вы можете ввести свой вопрос.')
+                    update.message.reply_text('Спасибо, ваш профиль уже заполнен. Теперь вы можете задать свой вопрос.')
                     
                 print(f"пользователь {student} авторизировался")
             else:
-                if "unable to bind" in message:  # Здесь вместо этой строки вы можете использовать свою строку ошибки, если у вас таковая есть
-                    update.message.reply_text('Этот чат доступен только для студентов.')
-                else:
-                    update.message.reply_text('Неверные учетные данные.')
+                update.message.reply_text('Неверные учетные данные.')
 
         elif current_state == 'waiting_for_full_name':
             full_name = update.message.text
@@ -119,7 +112,7 @@ def auth_and_ask_question(update, context):
                 student.specialty = selected_specialty
                 student.save()
                 
-                update.message.reply_text('Спасибо, ваш профиль обновлен. Теперь вы можете ввести свой вопрос в текстовом поле ')
+                update.message.reply_text('Спасибо, ваш профиль обновлен. Теперь вы можете задать свой вопрос в текстовом поле ')
             else:
                 update.message.reply_text('Некорректный выбор. Попробуйте еще раз.')
         else: 
@@ -127,42 +120,38 @@ def auth_and_ask_question(update, context):
 
 
 def ask_question(update, context):
-    if context.user_data.get('is_authenticated'):
-        student = context.user_data.get('student')
+    student = context.user_data.get('student')
 
-        if student:
-            previous_question = Question.objects.filter(student=student).last()
-            advisor_group = Group.objects.get(name='Advisor')
-            advisor_users = advisor_group.user_set.annotate(num_requests=Count('assigned_requests')).order_by('num_requests')
-            assigned_user = advisor_users.first()
-            new_question, created = Question.objects.get_or_create(
-                student=student, 
-                is_closed=False, 
-                defaults={
-                    'conversation': [],
-                    'assigned_user': assigned_user
-                }
-            )
+    if student:
+        previous_question = Question.objects.filter(student=student).last()
+        advisor_group = Group.objects.get(name='Advisor')
+        advisor_users = advisor_group.user_set.annotate(num_requests=Count('assigned_requests')).order_by('num_requests')
+        assigned_user = advisor_users.first()
+        new_question, created = Question.objects.get_or_create(
+            student=student, 
+            is_closed=False, 
+            defaults={
+                'conversation': [],
+                'assigned_user': assigned_user
+            }
+        )
 
-            if previous_question and previous_question.is_closed:
-                text_to_send = 'Ваша предыдущая заявка закрыта. Создана новая заявка. Мы постараемся ответить как можно скорее.'
-            else:
-                text_to_send = 'Ваш вопрос создан. Мы постараемся ответить как можно скорее.'
-
-            if new_question.conversation is None:
-                new_question.conversation = []
-
-            current_time = timezone.now().strftime('%H:%M')
-            new_entry = {'type': 'question', 'text': update.message.text, 'timestamp': current_time}
-            new_question.conversation.append(new_entry)
-            new_question.save()
-
-            update.message.reply_text(text_to_send)
+        if previous_question and previous_question.is_closed:
+            text_to_send = 'Ваша предыдущая заявка закрыта. Создана новая заявка. Мы постараемся ответить как можно скорее.'
         else:
-            update.message.reply_text('Пожалуйста, сначала пройдите аутентификацию.')
-    else: 
-        update.message.reply_text('Пожалуйста, сначала пройдите аутентификацию.')
+            text_to_send = 'Ваш вопрос создан. Мы постараемся ответить как можно скорее.'
 
+        if new_question.conversation is None:
+            new_question.conversation = []
+
+        current_time = timezone.now().strftime('%H:%M')
+        new_entry = {'type': 'question', 'text': update.message.text, 'timestamp': current_time}
+        new_question.conversation.append(new_entry)
+        new_question.save()
+
+        update.message.reply_text(text_to_send)
+    else:
+        update.message.reply_text('Пожалуйста, сначала пройдите аутентификацию.')
 
 def close_chat(update, context):
     keyboard = [
@@ -194,39 +183,8 @@ def button(update, context):
             update.message.reply_text('Нет активного чата для закрытия.')
 
 def check_ad_credentials(ad_server, username, password):
-    try:
-        with ldap3.Connection(ad_server, user=username, password=password) as conn:
-            if not conn.bind():
-                return False, "Невозможно установить соединение", None
-
-            # Измените base_dn, чтобы он указывал на OU=STUDENTS
-            base_dn = 'OU=STUDENTS,DC=iab,DC=kz'
-            
-            # Используйте sAMAccountName без домена для поиска
-            username_without_domain = username.split('@')[0]
-            
-            search_filter = f'(&(objectClass=user)(sAMAccountName={username_without_domain}))'
-            
-            conn.search(base_dn, search_filter)
-            
-            if len(conn.entries) != 1:
-                return False, "Пользователь не найден или найдено несколько записей."
-            
-            user_entry = conn.entries[0]
-
-            # Проверка принадлежности пользователя к конкретному OU
-            student_ou = 'OU=STUDENTS,DC=iab,DC=kz'
-            tech_support_ou = 'OU=Отдел технической поддержки и телекоммуникаций,DC=iab,DC=kz'
-
-            if student_ou in str(user_entry.memberOf):
-                return True, "Успешная аутентификация студента", 'student'
-            elif tech_support_ou in str(user_entry.memberOf):
-                return True, "Успешная аутентификация сотрудника техподдержки", 'tech_support'
-            return False, "Пользователь не принадлежит к разрешенным группам", None
-    except Exception as e:
-        return False, str(e)
-    
-
+    with ldap3.Connection(ad_server, user=username, password=password) as conn:
+        return conn.bind()
 
 updater = Updater(token=settings.TELEGRAM_BOT_TOKEN, use_context=True)
 dp = updater.dispatcher

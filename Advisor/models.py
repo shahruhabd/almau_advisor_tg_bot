@@ -78,9 +78,3 @@ class FAQ(models.Model):
 
     def __str__(self):
         return self.question 
-    
-class Mailing(models.Model):
-    students = models.ManyToManyField('Student')
-    message = models.TextField()
-    file = models.FileField(upload_to='mailings/', null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)

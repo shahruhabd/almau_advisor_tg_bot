@@ -1,5 +1,5 @@
 from django import forms
-from .models import Question, Mailing
+from .models import Question
 
 class LoginForm(forms.Form):
     username = forms.CharField(
@@ -23,9 +23,3 @@ class AssignUserForm(forms.ModelForm):
     class Meta:
         model = Question
         fields = ['assigned_user']
-
-
-class MailingForm(forms.ModelForm):
-    class Meta:
-        model = Mailing
-        fields = ['students', 'message', 'file']

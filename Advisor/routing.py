@@ -1,11 +1,6 @@
-from channels.routing import ProtocolTypeRouter, URLRouter
-from django.urls import path
-from .consumers import QuestionConsumer  # Убедитесь, что у вас есть consumer с таким именем
+from django.urls import re_path
+from . import consumers
 
-websocket_urlpatterns = [
-    path('ws/questions/', QuestionConsumer.as_asgi()),  # WebSocket к этому URL будет подключаться
-]
-
-application = ProtocolTypeRouter({
-    'websocket': URLRouter(websocket_urlpatterns),
-})
+# websocket_urlpatterns = [
+#     re_path(r'ws/socket-server/', consumers.ChatConsumer.as_asgi())
+# ]
