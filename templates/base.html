@@ -1,0 +1,117 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Эдвайзинг центр AlmaU</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <!-- бутстрап стили -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <!-- шрифт Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    {% block link %}
+    {% endblock %}
+</head>
+
+<body>
+    {% block style %}
+    {% endblock %}
+    <div class="wrapper d-flex">
+        {% if user.is_authenticated %}
+        <div class="toast-container">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="toast-body">
+                                {{ message }}
+                            </div>
+                            <button type="button" class="btn-close btn-close-white mr-2" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        
+        <nav class="p-5">
+            <div >
+                <a href="/">
+                    <img src="{% static 'img/almau_logo.png' %}" alt="almaulogo" style="width: 100%;">
+                </a>
+                <ul class="list-group mt-5">
+                    <li class="d-flex align-items-center gap-3 list-group-item list-group-item-action">
+                        <!-- <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="#004283"
+                            class="bi bi-house-fill nav_link-desc" viewBox="0 0 16 16">
+                            <path
+                                d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L8 2.207l6.646 6.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5Z" />
+                            <path d="m8 3.293 6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293l6-6Z" />
+                        </svg> -->
+                        <a href="{% url 'home' %}" class="nav_link nav_link-desc">Рабочий стол</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                        {% if user.is_superuser %}
+                            <li class="d-flex align-items-center gap-3 list-group-item list-group-item-action">
+                                <!-- <svg xmlns="http://www.w3.org/2000/svg" width="36"
+                                    height="36" fill="#004283" class="bi bi-person-fill" viewBox="0 0 16 16">
+                                    <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+                                </svg> -->
+                                <a href="/admin/"
+                                    class="nav_link">Админ панель</a>
+                            </li>
+                        {% endif %}
+    
+                        <li class="d-flex align-items-center gap-3 list-group-item list-group-item-action">
+                            <!-- <svg xmlns="http://www.w3.org/2000/svg" width="36"
+                                height="36" fill="#004283" class="bi bi-pc-display-horizontal nav_link_req" viewBox="0 0 16 16">
+                                <path
+                                    d="M1.5 0A1.5 1.5 0 0 0 0 1.5v7A1.5 1.5 0 0 0 1.5 10H6v1H1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-5v-1h4.5A1.5 1.5 0 0 0 16 8.5v-7A1.5 1.5 0 0 0 14.5 0h-13Zm0 1h13a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-7a.5.5 0 0 1 .5-.5ZM12 12.5a.5.5 0 1 1 1 0 .5.5 0 0 1-1 0Zm2 0a.5.5 0 1 1 1 0 .5.5 0 0 1-1 0ZM1.5 12h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1ZM1 14.25a.25.25 0 0 1 .25-.25h5.5a.25.25 0 1 1 0 .5h-5.5a.25.25 0 0 1-.25-.25Z" />
+                            </svg> -->
+                            <a href="{% url 'show_questions' %}" class="nav_link nav_link_req">Заявки</a>
+                        </li>
+                        <li class="d-flex align-items-center gap-3 list-group-item list-group-item-action">
+                            <!-- <svg xmlns="http://www.w3.org/2000/svg" width="36"
+                                height="36" fill="#004283" class="bi bi-pc-display-horizontal nav_link_req" viewBox="0 0 16 16">
+                                <path
+                                    d="M1.5 0A1.5 1.5 0 0 0 0 1.5v7A1.5 1.5 0 0 0 1.5 10H6v1H1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-5v-1h4.5A1.5 1.5 0 0 0 16 8.5v-7A1.5 1.5 0 0 0 14.5 0h-13Zm0 1h13a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-7a.5.5 0 0 1 .5-.5ZM12 12.5a.5.5 0 1 1 1 0 .5.5 0 0 1-1 0Zm2 0a.5.5 0 1 1 1 0 .5.5 0 0 1-1 0ZM1.5 12h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1ZM1 14.25a.25.25 0 0 1 .25-.25h5.5a.25.25 0 1 1 0 .5h-5.5a.25.25 0 0 1-.25-.25Z" />
+                            </svg> -->
+                            <a href="{% url 'send_mailing' %}" class="nav_link nav_link_mail">Рассылка</a>
+                        </li>
+                    {% endif %}
+    
+                </ul>
+            </div>
+            {% if user.is_authenticated %}
+            <div class="current_user">
+                <div class="d-flex justify-content-between p-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16">
+                        <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514ZM11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
+                        <path d="M8.256 14a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z"/>
+                    </svg>
+                    <dic class="d-flex">{{ user.username }}</dic>
+                </div>
+                <a href="{% url 'logout' %}?next=/" class=" btn btn-danger w-100">Выход</a>
+            </div>
+            {% endif %}
+        </nav>
+        {% endif %}
+        <div class="content w-100">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+    {% block script %}
+    {% endblock %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

@@ -1,0 +1,26 @@
+# Ignore node_modules directory
+node_modules/
+
+# Byte-compiled / optimized Python files
+__pycache__/
+*.py[cod]
+
+# Django-specific
+*.log
+db.sqlite3
+media/
+
+# Ignore the virtual environment
+venv/
+env/
+
+# Ignore the local settings file
+Almau_Advisor/local_settings.py
+
+# Ignore the static files (if not using a CDN)
+static/
+
+# Ignore IDE specific files
+.idea/
+.vscode/
+*.swp

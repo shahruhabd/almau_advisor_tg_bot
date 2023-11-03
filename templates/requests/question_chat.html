@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block link %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="{% static 'css/question.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-question_detail">
+    <h1 class="text-white">Заявка #{{ question.id }}</h1>
+    <div class="content_question_detail">
+
+        <div class="mb-4 about_student">
+            <!-- <h3 class="mb-3"><b>О студенте:</b></h3> -->
+            <div class="list-group">
+                <div class="list-group-item list-group-item-action"><strong>Логин:</strong> {{ question.student.username }}</div>
+                <div class="list-group-item list-group-item-action"><strong>Специальность:</strong> {{ question.student.specialty }}</div>
+                <div class="list-group-item list-group-item-action"><strong>Курс:</strong> {{ question.student.course }}</div>
+                <div class="list-group-item list-group-item-action">
+                    <strong>Эдвайзер:</strong> {{ question.assigned_user }}
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userModal">
+                        Изменить
+                    </button>
+                </div>
+
+                <!-- Модальное окно -->
+                <div class="modal fade" id="userModal" tabindex="-1">
+                    <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title">Выберите пользователя</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                        </div>
+                        <div class="modal-body">
+                        <form action="" id="assignUserForm" method="post">
+                            {% csrf_token %}
+                            {{ assign_user_form.assigned_user }}
+                            <input type="hidden" name="assign_user_form" value="1">
+                            <button type="submit" class="btn btn-primary" id="saveButton">Сохранить изменения</button>
+                        </form>
+                        </div>
+                        <div  iv class="modal-footer">
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+                <div class="list-group-item list-group-item-action"><strong>Статус:</strong> 
+                    {% if question.status == 'NEW' %}
+                        Новая
+                    {% elif question.status == 'IN_PROCESS' %}
+                        В обработке
+                    {% elif question.status == 'MAIN_ADVISOR' %}
+                        В обработке у главы ЭЦ
+                    {% else %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock-fill" viewBox="0 0 16 16">
+                        <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                        </svg>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+        <div class="chat_container">
+            <div class="justify-content-center chat_container_name">
+                <div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                    class="bi bi-person-fill" viewBox="0 0 16 16">
+                    <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+                    </svg>
+                {{ question.student.full_name }}
+                </div>
+                
+                {{ question.created_at }}
+            </div>
+            <div class="chat-box">
+                {% for entry in question.conversation %}
+                    <div class="chat-message {{ entry.type }}">
+                        <div>
+                            {{ entry.text }}
+                            <span class="timestamp">{{ entry.timestamp }}</span>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p>Нет разговора</p>
+                {% endfor %}
+            </div>
+            {% if question.status == 'CLOSED' %}
+            <div class="closed_question">Заявка закрыта</div>
+            {% else %}
+            <form method="post" action="{% url 'view_question' question.id %}">
+                {% csrf_token %}
+                <div class="dropup mb-1">
+                    <button class="btn btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false" style="background-color: #3B3B3B; color: #fff;">
+                        Быстрые сообщения
+                    </button>
+                    <ul class="dropdown-menu">
+                        {% for qmessage in quickMessages %}
+                        <li><a class="dropdown-item" href="#" onclick="insertText('{{qmessage.text}}')">{{ qmessage.text }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="input-group mb-1">
+                    <textarea class="form-control" aria-label="With textarea" id="messageInput" name="answer" rows="2"
+                        placeholder="Отправить сообщение"></textarea>
+                    <button type="submit" class="btn" style="background-color: #3B3B3B; color: #fff;">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </form>
+            {% endif %}
+
+
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+{% block script %}
+<script>
+    function insertText(text) {
+        var input = document.getElementById('messageInput');
+        input.value = text;
+    }
+    window.onload = function () {
+        var chatBox = document.querySelector('.chat-box');
+        chatBox.scrollTop = chatBox.scrollHeight;
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Получаем textarea по его ID
+        const messageInput = document.getElementById('messageInput');
+
+        // Добавляем событие keydown к textarea
+        messageInput.addEventListener('keydown', function(event) {
+            // Проверяем, была ли нажата клавиша Enter и не удерживается ли клавиша Shift
+            if (event.key === 'Enter' && !event.shiftKey) {
+                // Отменяем стандартное действие (новая строка в textarea)
+                event.preventDefault();
+
+                // Находим ближайшую форму и отправляем ее
+                // Вы также можете здесь выполнить любой AJAX-запрос, если нужно
+                messageInput.closest('form').submit();
+            }
+        });
+    });
+</script>
+{% endblock %}

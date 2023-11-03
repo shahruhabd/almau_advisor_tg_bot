@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block link %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<div class="home-container">
+
+  <div class="d-flex justify-content-between align-items-center">
+    <div class="home_title">Профиль {{ user.username }} {{ user.first_name }}!</div>
+  </div>
+  {% if user.is_superuser %}
+  <div class="p-1 my-5">
+    <h3 class="text-center">Список эдвайзеров</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Эдвайзер</th>
+          <th>Всего вопросов</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for advisor in advisors %}
+        <tr>
+          <td>{{ advisor.username }}</td>
+          <td>{{ advisor.total_questions }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
+  {% endif %}
+  <div class="profile-container">
+    <div class="dashboard">
+      <h3 class="dashboard_title">Статистика</h3>
+      <div class="row">
+        <div class="col-lg-4 col-md-6 col-sm-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Всего вопросов</h5>
+              <h1 class="display-4 text-center">{{ total_questions }}</h1>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 col-sm-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Закрыто</h5>
+              <h1 class="display-4 text-center">{{ closed_questions }}</h1>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 col-sm-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Новые</h5>
+              <h1 class="display-4 text-center">{{ new_questions }}</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-lg-4 col-md-6 col-sm-12">
+          <div class="card mb-3">
+            <div class="card-body">
+              <h5 class="card-title">За сегодня</h5>
+              <h1 class="display-4 text-center">{{ daily_count }}</h1>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 col-sm-12">
+          <div class="card mb-3">
+            <div class="card-body">
+              <h5 class="card-title">За неделю</h5>
+              <h1 class="display-4 text-center">{{ weekly_count }}</h1>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 col-sm-12">
+          <div class="card mb-3">
+            <div class="card-body">
+              <h5 class="card-title">За месяц</h5>
+              <h1 class="display-4 text-center">{{ monthly_count }}</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="login_wrapper">
+  <div class="login_container">
+    <div class="login_content">
+      <div class="home_title">Добро пожаловать, гость!</div>
+      <div class="home_guest_decs text-center">Для начала работы, нужно войти в аккаунт</div>
+    </div>
+    <form method="post" class="login">
+      <div>
+        <div class="login_title">Вход</div>
+        <div class="login_subtitle">Только для сотрудников Эдвайзинг центра AlmaU</div>
+      </div>
+
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div class="text-center">
+        <button type="submit" class="login_button">Войти</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block script %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="{% static 'js/home.js' %}"></script>
+{% endblock %}
