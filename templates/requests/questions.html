@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block link %}
+<link rel="stylesheet" href="{% static 'css/question.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="question_wrapper">
+  {% if questions %}
+  <h1 class="question_title">Список вопросов</h1>
+
+  <div id="loadingSpinner">
+    <div class="spinner-border text-primary" role="status">
+      <span class="sr-only">Загрузка...</span>
+    </div>
+  </div>
+
+  <form method="GET" action="{% url 'show_questions' %}">
+    <div class="input-group w-25 text-center mt-5">
+      <input type="text" id="search-query" name="search" placeholder="Поиск студента..." class="form-control">
+      <button class="btn btn-primary" type="button" id="search-button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+        </svg>
+      </button>
+    </div>
+  </form>
+
+  <a href="{% url 'show_questions' %}" class="btn btn-secondary btn-sm mt-3">Все чаты <span id="total-questions-count" class="badge bg-primary">{{ total_questions_count }}</span></a>
+  
+  <form id="filter-form" class="form-control mt-3">
+    <div class="d-flex gap-3 mb-3" style="align-items: flex-end;">
+      <div>
+        <label for="assigned-user-filter">Эдвайзер:</label>
+        <select id="assigned-user-filter" class="form-select form-select-sm">
+            <option value="">Все</option>
+        </select>
+      </div>
+  
+      <div>
+        <label for="status-filter">Статус:</label>
+        <select id="status-filter" class="form-select form-select-sm">
+            <option value="" selected>Все</option>
+        </select>
+      </div>
+
+      <button type="button" onclick="applyFilters()" class="btn btn-secondary btn-sm">Применить</button>
+    </div>
+  </form>
+
+  <table class="table table-hover mt-3" id="questionsTable">
+    <thead>
+      <tr>
+        <th scope="col" class="text-center">#ID</th>
+        <th scope="col">Студент</th>
+        <th scope="col" class="text-center align-items-center">Последнее сообщение</th>
+        <th scope="col" class="text-center">Статус</th>
+        <th scope="col" class="text-center">Дата</th>
+        <th scope="col" class="text-center">Эдвайзер</th>
+        <th class="text-center align-items-center" scope="col">Посмотреть</th>
+      </tr>
+    </thead>
+    <tbody id="questions-table-body">
+      
+    </tbody>
+  </table>
+  <div id="pagination-container" class="text-center mt-3"></div>
+  <div >
+  </div>
+  {% else %}
+  <h1 class="text-white text-center">Заявок нет</h1>
+  {% endif %}
+</div>
+
+{% endblock %}
+
+{% block script %}
+  <script src="{% static 'js/question.js' %}"></script>
+{% endblock %}

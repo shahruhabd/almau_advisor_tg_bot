@@ -1,0 +1,84 @@
+.login_wrapper {
+    margin: 0 auto;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #323643;
+
+}
+.login_container {
+    /* height: 100%; */
+    background-color: #668ba4;
+    color: #fff;
+    border-radius: 12px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.login_subtitle {
+    font-size: 12px;
+    font-weight: 200;
+    margin-top: 10px;
+}
+.home_title {
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+}
+.home_guest_decs {
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: 400;
+    text-align: center;
+}
+.login input {
+    width: 100%;
+    border-radius: 2px;
+    padding: 5px;
+    border: 0;
+    font-size: 14px;
+}
+.login_content {
+    margin-bottom: 20px;
+}
+.login_button {
+    width: 100%;
+    font-size: 14px;
+    padding: 5px 0;
+    border: 0;
+    border-radius: 2px;
+    background-color: #323643;
+    color: #fff;
+}
+.login_button:hover {
+    background-color: #414757;
+}
+.home_container {
+    padding: 40px;
+    width: 100%;
+    background-color: #323643;
+    color: #fff;
+    min-height: calc(100vh - 50px);
+}
+.advisors_list_title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+.advisor_list_table {
+    font-size: 14px;
+}
+.advisor_list_table td, 
+.advisor_list_table th {
+    padding: 4px 12px;
+}
+.dashboard_title {
+    font-size: 16px;
+    font-weight: 600;
+}
+.dashboard_calendar {
+    width: 150px;
+    font-size: 14px;
+}

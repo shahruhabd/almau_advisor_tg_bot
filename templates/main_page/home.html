@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block link %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<div class="home_container">
+  {% if user.is_superuser %}
+  <div class="">
+    <div class="advisors_list_title">Список эдвайзеров</div>
+    <table class="table table-hover advisor_list_table">
+      <thead class="table-dark">
+        <tr>
+          <th>Эдвайзер</th>
+          <th>Закрытые</th>
+          <th>В обработке</th>
+          <th>Новые</th>
+          <th>У главы ЭЦ</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for advisor in advisors %}
+        <tr>
+            <td>{{ advisor.username }}</td>
+            <td>{{ advisor.closed_count }}</td>
+            <td>{{ advisor.in_process_count }}</td>
+            <td>{{ advisor.new_count }}</td>
+            <td>{{ advisor.main_advisor_count }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
+  {% endif %}
+  <div class="profile-container">
+    <div class="dashboard">
+      <h3 class="dashboard_title">Статистика</h3>
+      <!-- выбор диапазона -->
+      <form method="get" action="" class="d-flex gap-3 my-3">
+        <input type="date" name="start_date" value="{{ start_date }}" class="form-control dashboard_calendar">
+        <input type="date" name="end_date" value="{{ end_date }}" class="form-control dashboard_calendar">
+        <button type="submit" class="btn btn-primary">Фильтровать</button>
+      </form>
+
+      <div class="row">
+        <div class="col-lg-4 col-md-6 col-sm-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Всего вопросов</h5>
+              <h1 class="display-4 text-center">{{ total_questions }}</h1>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 col-sm-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Закрыто</h5>
+              <h1 class="display-4 text-center">{{ closed_questions }}</h1>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 col-sm-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Открыто</h5>
+              <h1 class="display-4 text-center">{{ open_questions }}</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="login_wrapper">
+  <div class="login_container">
+    <div class="login_content">
+      <div class="home_title">Добро пожаловать, дорогой эдвайзер!</div>
+      <div class="home_guest_decs">Для начала работы, нужно войти в аккаунт</div>
+    </div>
+    <form method="post" class="login">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="login_button">Войти</button>
+      <div class="login_subtitle">Только для сотрудников Эдвайзинг центра AlmaU</div>
+    </form>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block script %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="{% static 'js/home.js' %}"></script>
+{% endblock %}

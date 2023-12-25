@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block link %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container_profile">
+  <h2>Обновление профиля</h2>
+  <form method="post" class="profile_change_form">
+    {% csrf_token %}
+    <div class="">    
+      {{ form }}
+    </div>
+    <button type="submit" class="btn btn-outline-primary profile_btn w-100">Сохранить изменения</button>
+  </form>
+</div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}

@@ -1,0 +1,43 @@
+.container_profile {
+    padding: 40px;
+    background-color: #323643;
+    height: calc(100vh - 50px);
+    color: #fff;
+}
+.profile_change_form {
+    background-color: #fff;
+    margin: 40px auto;
+    max-width: 600px;
+    padding: 40px;
+    border-radius: 12px;
+}
+#id_full_name {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+.profile_change_form > label {
+    display: none;
+    width: 0;
+}
+.profile_name_label {
+    color: #323643;
+    font-weight: 600;
+}
+.profile_btn {
+    margin-top: 20px;
+}
+
+
+#id_full_name::-webkit-input-placeholder       {opacity: 1; transition: opacity 0.3s ease;}
+#id_full_name::-moz-placeholder                {opacity: 1; transition: opacity 0.3s ease;}
+#id_full_name:-moz-placeholder                 {opacity: 1; transition: opacity 0.3s ease;}
+#id_full_name:-ms-input-placeholder            {opacity: 1; transition: opacity 0.3s ease;}
+#id_full_name:focus::-webkit-input-placeholder {opacity: 0; transition: opacity 0.3s ease;}
+#id_full_name:focus::-moz-placeholder          {opacity: 0; transition: opacity 0.3s ease;}
+#id_full_name:focus:-moz-placeholder           {opacity: 0; transition: opacity 0.3s ease;}
+#id_full_name:focus:-ms-input-placeholder      {opacity: 0; transition: opacity 0.3s ease;}
