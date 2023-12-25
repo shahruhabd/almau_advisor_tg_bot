@@ -14,4 +14,5 @@ urlpatterns = [
     path('ad/', ad_list, name='ad_list'),
     path('send_mailing/', send_mailing, name='send_mailing'),
     path('profile/', update_profile, name='update_profile'),
+    path('import-students/', import_students_view, name='import-students'),
 ]

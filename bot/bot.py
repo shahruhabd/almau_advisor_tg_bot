@@ -158,14 +158,6 @@ def handle_message(update, context):
     else:
         update.message.reply_text("По вашему запросу ничего не найдено.\n\n/start - главное меню")
     return ConversationHandler.END
-# def faq_command(update, context):
-#     query = update.callback_query
-#     query.answer()
-#     faqs = FAQ.objects.all()
-#     response = ''
-#     for i, faq in enumerate(faqs):
-#         response += f"{i+1}. {faq.question}\n{faq.answer}\n\n"
-#     query.edit_message_text(response)
 
 # АВТОРИЗАЦИЯ ДЛЯ СТУДЕНТОВ
 USERNAME, PASSWORD, FULL_NAME, COURSE, SPECIALTY, GENDER, DEPARTMENT = range(7)
@@ -449,7 +441,7 @@ def receive_username_teach(update, context):
         username += "@almau.edu.kz"
     context.user_data['auth_username'] = username
     update.message.reply_text("Введите ваш пароль:")
-    return PASSWORD
+    return PASSWORD_TEACH
 
 def receive_password_teach(update, context):
     username = context.user_data.get('auth_username')
@@ -868,7 +860,6 @@ def main():
     )
 
     dp.add_handler(decline_handler)
-    # dp.add_handler(CallbackQueryHandler(decline_request, pattern='^decline_'))
     dp.add_handler(CallbackQueryHandler(close_request_handler, pattern='^close_request_'))
 
     print("Starting bot...")

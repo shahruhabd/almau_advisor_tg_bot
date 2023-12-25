@@ -1,22 +1,21 @@
-from datetime import timedelta
-from django.http import HttpResponseRedirect
+import requests
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User, Group
+from django.contrib.auth import login, logout
+from django.contrib import messages
 from django.urls import reverse
 from django.shortcuts import get_object_or_404, render, redirect
-from .models import *
-import requests
-from django.contrib import messages
-from django.contrib.auth import login, logout
-from django.contrib.auth.models import User, Group
+from django.db.models import Q, Count
+from django.utils import timezone
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from ldap3 import Server, Connection, ALL
+from datetime import datetime, timedelta
 from .forms import LoginForm, AssignUserForm, MailingForm, StatusForm, UserProfileForm
+from .models import *
+from .utils import import_students_from_excel
 from .ldap_check import check_ad_credentials
 from telegram import Bot
-from ldap3 import Server, Connection, ALL, SUBTREE
-from django.db.models import Q, Count
-from django.contrib.auth.decorators import login_required
-from django.utils import timezone
-from django.http import JsonResponse
-from datetime import datetime
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def home(request):
     form = LoginForm(request.POST or None)
@@ -420,10 +419,17 @@ def update_profile(request):
 
 # скрипт для выгрузки студентов
 
-# from .utils import import_students_from_excel
+
 # file_path = 'uploads/students.xlsx'
 # import_students_from_excel(file_path)
-
+@login_required
+def import_students_view(request):
+    if request.method == "POST":
+        file_path = 'uploads/students.xlsx'
+        import_students_from_excel(file_path)
+        return HttpResponse("Студенты были успешно импортированы.")
+    else:
+        return render(request, 'main_page/import_students.html')
 
 def logout_request(request):
     logout(request)
