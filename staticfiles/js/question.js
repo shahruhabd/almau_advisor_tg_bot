@@ -29,6 +29,7 @@ function updateQuestions(pageNumber = 1, searchQuery = currentSearchQuery) {
       let questionsHtml = questions
         .map((question) => {
           return `
+          <a href="/view_question/${question.id}">
             <tr class="table_tr">
               <th scope="row" class="question_table_string">${question.id}</th>
               <td class="question_table_string">
@@ -37,7 +38,7 @@ function updateQuestions(pageNumber = 1, searchQuery = currentSearchQuery) {
               <td class="question_table_string">
                 ${question.last_message.slice(0, 25)}...
               </td>
-              <td class="question_table_string" style="color: ${question.status_color};">
+              <td class="question_table_string" style="background-color: ${question.status_color};">
                 ${question.status_text}
               </td>
               <td class="question_table_string">${question.last_message_time}</td>
@@ -48,6 +49,7 @@ function updateQuestions(pageNumber = 1, searchQuery = currentSearchQuery) {
                 </a>
               </td>
             </tr>
+          </a>
           `;
         })
         .join("");

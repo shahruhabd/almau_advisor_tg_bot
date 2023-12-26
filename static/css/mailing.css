@@ -10,6 +10,8 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+    max-width: 1000px;
+    margin: 0 auto;
 }
 .mailing_textarea {
     height: 200px!important;

@@ -14,12 +14,9 @@ media/
 venv/
 env/
 
-# Ignore the local settings file
-Almau_Advisor/local_settings.py
-Almau_Advisor/settings.py
-
-
 # Ignore IDE specific files
 .idea/
 .vscode/
 *.swp
+
+.uploads.mailings

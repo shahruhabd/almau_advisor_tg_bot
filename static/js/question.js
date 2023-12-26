@@ -2,9 +2,9 @@
 // document.getElementById("status-filter").addEventListener("change", applyFilters);
 
 let currentPage = 1;
-let assignedUserFilter = '';
-let statusFilter = '';
-let currentSearchQuery = '';
+let assignedUserFilter = "";
+let statusFilter = "";
+let currentSearchQuery = "";
 
 function renderConversation(conversation) {
   if (!conversation || conversation.length === 0) {
@@ -16,7 +16,9 @@ function renderConversation(conversation) {
 }
 
 function updateQuestions(pageNumber = 1, searchQuery = currentSearchQuery) {
-  const url = `/questions/json/?page=${pageNumber}&assigned_user=${assignedUserFilter}&status=${statusFilter}&search=${encodeURIComponent(searchQuery)}`;
+  const url = `/questions/json/?page=${pageNumber}&assigned_user=${assignedUserFilter}&status=${statusFilter}&search=${encodeURIComponent(
+    searchQuery
+  )}`;
   fetch(url)
     .then((response) => {
       if (!response.ok) {
@@ -28,6 +30,9 @@ function updateQuestions(pageNumber = 1, searchQuery = currentSearchQuery) {
       const questions = data.questions;
       let questionsHtml = questions
         .map((question) => {
+          const lastMessageSnippet = question.last_message.length > 25
+            ? question.last_message.slice(0, 25) + "..."
+            : question.last_message;
           return `
             <tr class="table_tr">
               <th scope="row" class="question_table_string">${question.id}</th>
@@ -35,9 +40,9 @@ function updateQuestions(pageNumber = 1, searchQuery = currentSearchQuery) {
                 ${question.student}
               </td>
               <td class="question_table_string">
-                ${question.last_message.slice(0, 25)}...
+                ${lastMessageSnippet}
               </td>
-              <td class="question_table_string" style="color: ${question.status_color};">
+              <td class="question_table_string question_table_string_status" style="background-color: ${question.status_color};";>
                 ${question.status_text}
               </td>
               <td class="question_table_string">${question.last_message_time}</td>
@@ -53,7 +58,8 @@ function updateQuestions(pageNumber = 1, searchQuery = currentSearchQuery) {
         .join("");
 
       if (questions.length === 0) {
-        questionsHtml = '<tr><td colspan="7" class="text-center">Нет вопросов</td></tr>';
+        questionsHtml =
+          '<tr><td colspan="7" class="text-center">Нет вопросов</td></tr>';
       }
 
       document.getElementById("questions-table-body").innerHTML = questionsHtml;
@@ -65,7 +71,6 @@ function updateQuestions(pageNumber = 1, searchQuery = currentSearchQuery) {
       console.error("Ошибка:", error);
     });
 }
-
 
 function updatePagination(totalPages, currentPage) {
   const paginationContainer = document.getElementById("pagination-container");
@@ -98,10 +103,16 @@ function updatePagination(totalPages, currentPage) {
 }
 
 function updateFilterOptions(data) {
-  const assignedUserFilterSelect = document.getElementById("assigned-user-filter");
+  const assignedUserFilterSelect = document.getElementById(
+    "assigned-user-filter"
+  );
   const statusFilterSelect = document.getElementById("status-filter");
 
-  if (!data || !Array.isArray(data.assignedUser) || !Array.isArray(data.status)) {
+  if (
+    !data ||
+    !Array.isArray(data.assignedUser) ||
+    !Array.isArray(data.status)
+  ) {
     console.error("Ошибка: Некорректные данные для фильтров.", data);
     return;
   }
@@ -132,8 +143,9 @@ function updateFilterOptions(data) {
   statusFilterSelect.value = selectedStatus;
 }
 
-const savedAssignedUserFilter = sessionStorage.getItem("assignedUserFilter") || '';
-const savedStatusFilter = sessionStorage.getItem("statusFilter") || '';
+const savedAssignedUserFilter =
+  sessionStorage.getItem("assignedUserFilter") || "";
+const savedStatusFilter = sessionStorage.getItem("statusFilter") || "";
 updateQuestions(currentPage, savedAssignedUserFilter, savedStatusFilter);
 
 setInterval(function () {
@@ -147,10 +159,12 @@ function applyFilters() {
   updateQuestions(1, currentSearchQuery);
 }
 
-document.querySelector('[name="search"]').addEventListener('input', function(e) {
-  currentSearchQuery = e.target.value; 
-  updateQuestions(1, currentSearchQuery);
-});
+document
+  .querySelector('[name="search"]')
+  .addEventListener("input", function (e) {
+    currentSearchQuery = e.target.value;
+    updateQuestions(1, currentSearchQuery);
+  });
 
 function updateTotalQuestionsCount() {
   fetch("/get_total_questions_count/json")

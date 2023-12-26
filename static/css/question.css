@@ -38,11 +38,13 @@
 }
 .adv_change_icon {
     cursor: pointer;
-    color: #ffffff;
-
+    color: #222831;
+    margin-bottom: 5px;
+    transform: scale(1);
+    transition: transform 0.3s ease;
 }
 .adv_change_icon:hover {
-    color: #007bff;
+    transform: scale(1.2);
 }
 .modal-footer{
     border: 0!important;
@@ -143,4 +145,8 @@
 .question_table_string {
     text-align: center;
     font-size: 13px;
+}
+.question_table_string_status {
+    color: #fff!important;
+    font-weight: 500;
 }
