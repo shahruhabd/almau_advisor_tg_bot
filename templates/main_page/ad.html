@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LDAP Entries</title>
+</head>
+<body>
+    <h1>LDAP Entries {{ entries|length }}</h1>
+    {% for entry in entries %}
+        <div>
+            <strong>CN:</strong> {{ entry.cn }}
+            <br>
+            <strong>Member Of:</strong> {{ entry.memberOf }}
+            <br>
+            <strong>SAM Account Name:</strong> {{ entry.sAMAccountName }}
+            <br>
+            <strong>User Principal Name:</strong> {{ entry.userPrincipalName }}
+            <hr>
+        </div>
+    {% endfor %}
+</body>
+</html>

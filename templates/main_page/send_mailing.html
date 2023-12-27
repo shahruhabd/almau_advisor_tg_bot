@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block link %}
+<link rel="stylesheet" href="{% static 'css/mailing.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="mailing_container">
+    <form method="get" action="" class="">
+        <div class="search">
+            <h3 class="text-white text-center">Рассылка студентам</h3>
+            <input type="text" name="search_query" placeholder="Поиск..." class="form-control">
+            <div class="d-flex gap-3">
+                <select name="course_filter" class="form-control">
+                    <option value="">Выберите курс</option>
+                    <option value="1">1 курс</option>
+                    <option value="2">2 курс</option>
+                    <option value="3">3 курс</option>
+                    <option value="4">4 курс</option>
+                </select>
+                <select name="gender_filter" class="form-control">
+                    <option value="">Выберите пол</option>
+                    <option value="Мужчина">Мужчина</option>
+                    <option value="Женщина">Женщина</option>
+                </select>
+                <select name="department_filter" class="form-control">
+                    <option value="">Выберите отделение</option>
+                    <option value="Казахское отделение">Казахское отделение</option>
+                    <option value="Русское отделение">Русское отделение</option>
+                    <option value="Английское отделение">Английское отделение</option>
+                </select>
+            </div>
+            <div class="applied-filters">
+                {% if filters_applied %}
+                    <p>Применённые фильтры:</p>
+                    <ul>
+                        {% if search_query %}
+                            <li>Поиск: {{ search_query }}</li>
+                        {% endif %}
+                        {% if course_filter %}
+                            <li>Курс: {{ course_filter }}</li>
+                        {% endif %}
+                        {% if gender_filter %}
+                            <li>Пол: {{ gender_filter }}</li>
+                        {% endif %}
+                        {% if department_filter %}
+                            <li>Отделение: {{ department_filter }}</li>
+                        {% endif %}
+                    </ul>
+                {% else %}
+                    <p>Фильтры не применены.</p>
+                {% endif %}
+            </div>
+            <div>
+                <a href="{% url 'send_mailing' %}" id="resetFilters" class="reset_filters">Очистить все фильтры</a>
+            </div>
+            <button class="btn btn-primary" type="submit">Найти</button>
+        </div>
+    </form>
+    <hr>
+    <form method="post" enctype="multipart/form-data" class="mailing_form">
+        {% csrf_token %}
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-primary alert-dismissible fade show">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="width: 10px; height: 10px;"></button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        <div class="">
+            <div class="form-group mail_group">
+                <div class="form-floating">
+                    <textarea class="form-control mailing_textarea" placeholder="Ваш текст рассылки" id="{{ form.message.id_for_label }}" name="{{ form.message.name }}"></textarea>
+                    <label for="floatingTextarea">Текст для рассылки</label>
+                </div>
+                <input type="file" id="{{ form.file.id_for_label }}" name="{{ form.file.name }}" class="form-control">
+                <button type="submit" class="btn btn-primary" name="submit">Отправить</button>
+            </div>
+            <hr>
+            <h5 class="text-white">Найдено <span class="badge bg-secondary">{{ students|length }}</span></h5>
+            <table class="table table-bordered table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th class="text-center">
+                            <button type="button" id="select-all" class="btn btn-secondary btn-sm">Все</button>
+                        </th>
+                        <th class="text-center">Логин</th>
+                        <th class="text-center">ФИО</th>
+                        <th class="text-center">Специальность</th>
+                        <th class="text-center">Курс</th>
+                        <th class="text-center">Пол</th>
+                        <th class="text-center">ЯО</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if  students%}
+                    {% for student in students %}
+                        <tr>
+                            <td class="mailing_table_string">
+                                <input type="checkbox" name="students" value="{{ student.id }}">
+                            </td>
+                            <td class="mailing_table_string">{{ student.username }}</td>
+                            <td class="mailing_table_string">{{ student.full_name }}</td>
+                            <td class="mailing_table_string">{{ student.specialty }}</td>
+                            <td class="mailing_table_string">{{ student.course }}</td>
+                            <td class="mailing_table_string">{% if student.gender == 'Женщина' %}Ж{% else %}М{% endif %}</td>
+                            <td class="mailing_table_string">{{ student.department }}</td>
+                        </tr>
+                    {% endfor %}
+                    {% endif%}
+                </tbody>
+            </table>
+            {% if not students %}
+            <tr>
+                <div class="text-white text-center">Никого не найдено</div>
+            </tr>
+            {% endif %}
+        </div>
+    </form>
+</div>   
+{% endblock %}
+
+{% block script %}
+  <script src="{% static 'js/mailing.js' %}"></script>
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+{% endblock %}

@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block link %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="{% static 'css/question.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-question_detail">
+    <h1 class="request_id">Заявка #{{ question.id }}</h1>
+    <div class="content_question_detail">
+
+        <div class="about_student">
+            <div class="list-group">
+                <div class="student_info_"><strong>Логин:</strong> {{ question.student.username }}</div>
+                <div class=""><strong>Форма обучения:</strong> {{ question.student.education_level }}</div>
+                <div class=""><strong>Школа:</strong> {{ question.student.school }}</div>
+                <div class=""><strong>Специальность:</strong> {{ question.student.specialty }}</div>
+                <div class=""><strong>Курс:</strong> {{ question.student.course }}</div>
+                <div class=""><strong>Отделение:</strong> {{ question.student.department }}</div>
+                <div class=""><strong>Пол:</strong> {% if question.student.gender == 'F' %}Ж{% else %}М{% endif %}</div><hr>
+
+                <div class=""><strong>Статус:</strong> 
+                    {% if question.status == 'NEW' %}
+                        Новая
+                    {% elif question.status == 'IN_PROCESS' %}
+                        В обработке
+                    {% elif question.status == 'MAIN_ADVISOR' %}
+                        В обработке у главы ЭЦ
+                    {% else %}
+                        Закрыта
+                    {% endif %}
+                    <svg class="adv_change_icon" data-bs-toggle="modal" data-bs-target="#statusModal" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">
+                        <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
+                    </svg>
+                    <!-- Модальное окно смена статуса -->
+                    <div class="modal fade" id="statusModal" tabindex="-1">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title text-dark">Изменить Статус</h5>
+                            </div>
+                            <div class="modal-body p-3">
+                                <form class="modal_choose_ass_user_form" action="" id="statusForm" method="post">
+                                    {% csrf_token %}
+                                    <div class="d-flex justify-content-center">{{ status_form.status }}</div>
+                                    <input type="hidden" name="status_form" value="1">
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-outline-primary btn-sm" id="saveButton">Сохранить изменения</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                    <strong>Эдвайзер:</strong> {{ question.assigned_user }}
+                    <svg class="adv_change_icon" data-bs-toggle="modal" data-bs-target="#userModal" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">
+                        <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
+                    </svg>
+                </div>
+
+                <!-- Модальное окно -->
+                <div class="modal fade" id="userModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title text-dark">Изменить Эдвайзера</h5>
+                            </div>
+                            <div class="modal-body p-3">
+                                <form class="modal_choose_ass_user_form" action="" id="assignUserForm" method="post">
+                                    {% csrf_token %}
+                                    {{ assign_user_form.assigned_user }}
+                                    <input type="hidden" name="assign_user_form" value="1">
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-outline-primary btn-sm" id="saveButton">Сохранить изменения</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="chat_container">
+            <div class="justify-content-center chat_container_name">
+                <div class="chat_header">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                    class="bi bi-person-fill" viewBox="0 0 16 16">
+                        <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+                    </svg>
+                    {{ question.student.full_name }} | {{ question.created_at }}
+                </div>
+            </div>
+            <div class="chat-box" data-question-id="{{ question.id }}">
+                <!-- {% for entry in question.conversation %}
+                    <div class="chat-message {{ entry.type }}">
+                        <div>
+                            {{ entry.text }}
+                            <span class="timestamp">{{ entry.timestamp }}</span>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p>Нет разговора</p>
+                {% endfor %} -->
+            </div>
+            {% if question.status == 'CLOSED' %}
+            <div class="closed_question">Заявка закрыта</div>
+            {% else %}
+            <form method="post" action="{% url 'view_question' question.id %}">
+                {% csrf_token %}
+                <div class="dropup mb-1">
+                    <button class="btn btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false" style="background-color: #3B3B3B; color: #fff;">
+                        Быстрые сообщения
+                    </button>
+                    <ul class="dropdown-menu">
+                        {% for qmessage in quickMessages %}
+                        <li><a class="dropdown-item" href="#" onclick="insertText('{{qmessage.text}}')">{{ qmessage.text }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="input-group mb-1">
+                    <textarea class="form-control" aria-label="With textarea" id="messageInput" name="answer" rows="2"
+                        placeholder="Отправить сообщение"></textarea>
+                    <button type="submit" class="btn" style="background-color: #3B3B3B; color: #fff;">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+{% block script %}
+
+<script src="{% static 'js/chat.js' %}"></script>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+
+<!-- Подключение Popper.js (необходим для Bootstrap 4) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+
+<!-- Подключение JavaScript для Bootstrap -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+{% endblock %}

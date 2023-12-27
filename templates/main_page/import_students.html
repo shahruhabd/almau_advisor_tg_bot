@@ -1,0 +1,7 @@
+{% block content %}
+  <h2>Импорт студентов</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary">Импортировать студентов</button>
+  </form>
+{% endblock %}
