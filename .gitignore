@@ -19,4 +19,4 @@ env/
 .vscode/
 *.swp
 
-.uploads.mailings
+bot/bot_token.py

@@ -27,6 +27,8 @@ from helpdesk.models import Lecturer, HelpDeskUser, HelpDeskRequest
 
 from datetime import datetime
 
+from .bot_token import ALMAU_ADVISOR_TOKEN
+
 def check_ad_credentials_stud(AD_SERVER, username, password):
     base_dn = 'OU=STUDENTS,DC=iab,DC=kz'
     search_filter = f'(userPrincipalName={username})'
@@ -140,7 +142,10 @@ def start(update, context):
 FAQ_QUESTION = range(1)
 def faq_command(update, context):
     query = update.callback_query
-    query.message.reply_text("Введите свой вопрос коротким хэш-тегом\n\nНапример: онай или военная кафедра или ритейк")
+    query.message.reply_text(
+        "Введите свой вопрос коротким хэш-тегом\n\nНапример: <i>онай,</i> <i>военная кафедра</i> или <i>ритейк</i>",
+        parse_mode='HTML'
+    )
     query.answer()
     return FAQ_QUESTION
 
@@ -759,7 +764,7 @@ def logout(update, context):
 def main():
     from telegram.utils.request import Request
     request = Request(con_pool_size=8, urllib3_proxy_kwargs={'verify': False})
-    bot = Bot('6381298802:AAFmZVISMBO9k9_T8MwweqBZFXoFuIGgOCg', request=request)
+    bot = Bot(ALMAU_ADVISOR_TOKEN, request=request)
     updater = Updater(bot=bot, use_context=True)
     dp = updater.dispatcher
 

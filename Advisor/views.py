@@ -17,6 +17,9 @@ from .utils import import_students_from_excel
 from .ldap_check import check_ad_credentials
 from telegram import Bot
 
+from bot.bot_token import ALMAU_ADVISOR_TOKEN
+
+
 def home(request):
     form = LoginForm(request.POST or None)
     advisors = None
@@ -259,7 +262,7 @@ def view_question(request, question_id):
             question.save()
 
             # Отправляем ответ в Telegram
-            bot = Bot(token='6381298802:AAFmZVISMBO9k9_T8MwweqBZFXoFuIGgOCg')
+            bot = Bot(token=ALMAU_ADVISOR_TOKEN)
             student = question.student
             chat_id = student.chat_id
             bot.send_message(chat_id, f'Ответ на ваш вопрос: {question.answer}')
@@ -306,8 +309,8 @@ def fetch_ldap_entries():
         print("Could not bind to server.")
         return []
 
-    # base_dn = 'OU=STUDENTS,DC=iab,DC=kz'
-    base_dn = 'OU=UsersDoc,DC=iab,DC=kz'
+    base_dn = 'OU=STUDENTS,DC=iab,DC=kz'
+    # base_dn = 'OU=UsersDoc,DC=iab,DC=kz'
     search_filter = '(objectClass=*)'
 
     conn.search(base_dn, search_filter, attributes=['cn', 'memberOf', 'sAMAccountName', 'userPrincipalName'])
@@ -360,7 +363,7 @@ def send_mailing(request):
                 for student in mailing.students.all():
                     chat_id = student.chat_id
                     message = mailing.message
-                    token = '6381298802:AAFmZVISMBO9k9_T8MwweqBZFXoFuIGgOCg'
+                    token = ALMAU_ADVISOR_TOKEN
                     send_message_url = f"https://api.telegram.org/bot{token}/sendMessage"
                     
                     try:

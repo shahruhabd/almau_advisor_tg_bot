@@ -74,27 +74,27 @@ WSGI_APPLICATION = 'Almau_Advisor.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DATABASE_NAME', 'almau_crm_bot'),
-        'USER': os.environ.get('DATABASE_USER', 'admin'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'qwerty123'),
-        'HOST': os.environ.get('DATABASE_HOST', 'db'),  
-        'PORT': os.environ.get('DATABASE_PORT', 5432),
-    }
-}
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'almau_crm_bot',
-#         'USER': 'admin',
-#         'PASSWORD': 'qwerty123',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
+#         'NAME': os.environ.get('DATABASE_NAME', 'almau_crm_bot'),
+#         'USER': os.environ.get('DATABASE_USER', 'admin'),
+#         'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'qwerty123'),
+#         'HOST': os.environ.get('DATABASE_HOST', 'db'),  
+#         'PORT': os.environ.get('DATABASE_PORT', 5432),
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'almau_crm_bot',
+        'USER': 'admin',
+        'PASSWORD': 'qwerty123',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
 
 
 # Password validation
